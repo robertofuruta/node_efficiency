@@ -4,8 +4,12 @@
 #include <fstream>
 #include <vector>
 #include <list>
+#include <string>
 #include <iostream>
 #include <sstream>
+
+#include <iomanip> //for setting the precision
+
 using namespace std;
 
 bool breadth_first_search(vector<int> adj_list[], int src, int N, int dist[])
@@ -30,7 +34,7 @@ bool breadth_first_search(vector<int> adj_list[], int src, int N, int dist[])
         int node = queue.front(); //the first node is chosen
         queue.pop_front();        //and it is removed from the queue
 
-        for (int i = 0; i < adj_list[node].size(); i++)
+        for (unsigned int i = 0; i < adj_list[node].size(); i++)
         { //for each index of neighbour
             if (visited[adj_list[node][i]] == false)
             {                                             // if it's not been visited:
@@ -76,6 +80,13 @@ int main(int argc, char *argv[])
 
     N = stoi(split_file_name[2]); //the N is the [2]th element
 
+    // creating the .eff filename
+    string output_file;
+    output_file = argv[1];
+    size_t pos = output_file.find(".");
+    output_file = output_file.substr(0, pos);
+    output_file += ".eff";
+
     //now let's create the vector and read the file.
     vector<int> adj_list[N];
 
@@ -103,7 +114,7 @@ int main(int argc, char *argv[])
     double eff_list[N]; // stores the efficiency of each node
     for (int i = 0; i < N; i++)
     {
-        cout << "node eff " << i << endl;
+        // cout << "node eff " << i << endl;
         eff_list[i] = 0; //initializes as 0.
         for (int j = 0; j < N; j++)
         {
@@ -112,6 +123,17 @@ int main(int argc, char *argv[])
                 eff_list[i] += 1. / dist_mat[i][j] / (N - 1);
             }
         }
-        cout << eff_list[i] << endl;
+        // cout << eff_list[i] << endl;
     }
+    ofstream myfile(output_file);
+    for (int i = 0; i < N; i++)
+    {
+        myfile << std::setprecision(6) << std::fixed;
+
+        if (myfile.is_open())
+        {
+            myfile << eff_list[i] << endl;
+        }
+    }
+    myfile.close();
 }
