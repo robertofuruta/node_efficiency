@@ -12,10 +12,10 @@
 
 using namespace std;
 
-bool breadth_first_search(vector<int> adj_list[], int src, int N, int dist[])
+bool breadth_first_search(vector<vector<int>> adj_list, int src, int N, vector<int> &dist)
 {
     list<int> queue;            // list of nodes not evaluated yet
-    bool visited[N];            // each position represents each node, it stores if the node was visited at least once
+    vector<bool> visited(N);    // each position represents each node, it stores if the node was visited at least once
     for (int i = 0; i < N; i++) //initializing each array
     {
         visited[i] = false;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     output_file += ".eff";
 
     //now let's create the vector and read the file.
-    vector<int> adj_list[N];
+    vector<vector<int>> adj_list(N);
 
     string line;
     while (getline(file, line)) //for each line in the edgelist file,
@@ -102,25 +102,22 @@ int main(int argc, char *argv[])
 
     // debug: print each neighbour pair
     // for (int i = 0; i < N; i++)
-    //     for (int j = 0; j < adj_list[i].size(); j++)
+    //     for (unsigned int j = 0; j < adj_list[i].size(); j++)
     //         cout << "From node " << i << " to node " << adj_list[i][j] << endl;
 
-    int dist_mat[N][N]; //stores the distances from src
+    vector<int> dist_from_src(N); //stores the distances from src
+    vector<double> eff_list(N);   // stores the efficiency of each node
     for (int i = 0; i < N; i++)
     {
-        breadth_first_search(adj_list, i, N, dist_mat[i]); //gets the distance from node i to all the nodes
-    }
-
-    double eff_list[N]; // stores the efficiency of each node
-    for (int i = 0; i < N; i++)
-    {
+        breadth_first_search(adj_list, i, N, dist_from_src); //gets the distance from node i to all the nodes
         // cout << "node eff " << i << endl;
         eff_list[i] = 0; //initializes as 0.
         for (int j = 0; j < N; j++)
         {
-            if (i != j && dist_mat[i][j] != INT_MAX) // if not the source node itself, neither isolated:
+            if (i != j && dist_from_src[j] != INT_MAX) // if not the source node itself, neither isolated:
             {
-                eff_list[i] += 1. / dist_mat[i][j] / (N - 1);
+                // cout << dist_from_src[j] << endl;
+                eff_list[i] += 1. / dist_from_src[j] / (N - 1);
             }
         }
         // cout << eff_list[i] << endl;
