@@ -13,7 +13,7 @@
 * the breadth first search (BFS) applied to every node: http://en.wikipedia.org/wiki/Breadth-first_search.
 
 * To execute the BFS, it is more convenient and efficient to have the list of adjacent nodes for every node (instead of
-* having to loop over the sparse adjacency matrix or the badly structured edge list), therefor we use the
+* having to loop over the sparse adjacency matrix or the badly structured edge list), therefore we use the
 * adjacency list to store the graph data.
 */
 
@@ -29,20 +29,23 @@
 
 using namespace std;
 
-// adj_list is used as a costant reference to evoid copying
+// adj_list is used as a constant reference to avoid copying
 void breadth_first_search(const vector<vector<int>> &adj_list, int src, int N, vector<int> &dist)
 {
-    vector<int> queue(N);           // list of nodes not evaluated yet
+    vector<int> queue(N); // vector of sequence of nodes to evaluate
+    //before, the queue as implemented using a list object, which was easier,
+    //but after changing to an implementation with vector, the code got approx. 2 times faster.
+    int pos = 0;        // the position in queue of the next node to evaluate
+    int next_empty = 1; // the position in the queue to which a new node will be added
+
     vector<bool> visited(N, false); // each position represents each node, it stores if the node was visited at least once
-    int pos = 0;
-    int next_empty = 1;
 
     // updating the first node: src
     visited[src] = true;
     dist[src] = 0;
-    queue[0] = (src);
+    queue[0] = src;
 
-    while (pos < next_empty) // while there are nodes to evaluate
+    while (pos < next_empty) // while there are nodes in the queue which were evaluated yet
     {
         int node = queue[pos]; // the first node is chosen
         pos += 1;              // and it is removed from the queue
@@ -55,7 +58,7 @@ void breadth_first_search(const vector<vector<int>> &adj_list, int src, int N, v
                 visited[adj_list[node][i]] = true;        // update to visited
                 dist[adj_list[node][i]] = dist[node] + 1; // +1 step distance to the neighbour adj_list[node][i]
                 queue[next_empty] = (adj_list[node][i]);  // add to the queue
-                next_empty += 1;
+                next_empty += 1;                          // update the next empty position
             }
         }
     }
@@ -78,8 +81,8 @@ int main(int argc, char *argv[])
     }
 
     // if there is no error,
-    // firstly, the number of edges read.
-    int N; // the number of edges is read from the .edgelist file name "???_n_'N'_k_'?_?'.edgelist"
+    // the number of edges read.
+    int N; // N is read from the .edgelist file name "???_n_'N'_k_'?_?'.edgelist"
     vector<string> split_file_name;
     stringstream s_stream(argv[1]); // string stream object
     while (s_stream.good())
@@ -107,14 +110,14 @@ int main(int argc, char *argv[])
         int src, dest;
         istringstream ss(line);
         ss >> src >> dest;             // the src (source) and dest (destination) node pair (edge) is read
-        adj_list[src].push_back(dest); // append the neighbourt to the list of adjacent nodes
-        adj_list[dest].push_back(src); // append the neighbourt to the list of adjacent nodes
+        adj_list[src].push_back(dest); // append the neighbour to the list of adjacent nodes
+        adj_list[dest].push_back(src); // append the neighbour to the list of adjacent nodes
     };
 
-    vector<double> eff_list(N, 0); // stores the efficiency of each noed
+    vector<double> eff_list(N, 0); // stores the efficiency of each node
 
     // for registering the time:
-    cout << output_file << "'s time to determine the efficiency is:" << endl;
+    cout << output_file << "'s time to determine the efficiency (in seconds) is:" << endl;
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     for (int i = 0; i < N; i++) // for every node:
@@ -123,10 +126,10 @@ int main(int argc, char *argv[])
         breadth_first_search(adj_list, i, N, dist_from_src); // gets the distance from node i to all the nodes
 
         for (int j = 0; j < N; j++) // for each neighbour:
-        // here we have spacial locallity between the distances allocated in the dist_from_src vector
+        // here we have spacial locality between the distances allocated in the dist_from_src vector
         {
             if (i != j && dist_from_src[j] != INT_MAX)          // if it's not the source node itself, neither isolated:
-            {                                                   // here we have temporal locallity of accessing eff_list[i] several times.
+            {                                                   // here we have temporal locality of accessing eff_list[i] several times.
                 eff_list[i] += 1. / dist_from_src[j] / (N - 1); // increment the efficiency
             }
         }
@@ -136,7 +139,7 @@ int main(int argc, char *argv[])
     std::chrono::duration<double> elapsed_seconds = end - start;
     cout << elapsed_seconds.count() << endl;
 
-    // after the eff_list is completely filled, it's content is writen to the output_file
+    // after the eff_list is completely filled, it's content is written to the output_file
     ofstream myfile(output_file);
     for (int i = 0; i < N; i++)
     {
@@ -152,8 +155,8 @@ int main(int argc, char *argv[])
 
 /*
 * Elapsed times:
-* N = 10 between 10ˆ5, 10ˆ4 s
-* N = 1000 ~0,2 s
-* N = 2000 ~1,0 s
-* N = 5000 between 5 and 8 s
+* N = 10 between ~10^-6 s
+* N = 1000 ~0.05 s
+* N = 2000 ~0.2 s
+* N = 5000 between ~2.0 s
 */
