@@ -2,4 +2,9 @@
 /.vscode
 .gitignore
 .venv
-__pycache__/cd.cpython-39.pyc
+__pycache__/
+bach_process.log
+log_interpreter.py
+node_eff_no_list
+node_eff
+test-data-eff/
