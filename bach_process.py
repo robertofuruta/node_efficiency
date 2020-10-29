@@ -1,6 +1,5 @@
 import os
 import glob
-from cd import cd
 
 
 class cd:
