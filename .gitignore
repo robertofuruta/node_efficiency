@@ -2,3 +2,4 @@
 /.vscode
 .gitignore
 .venv
+__pycache__/cd.cpython-39.pyc

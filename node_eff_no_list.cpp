@@ -32,18 +32,20 @@ using namespace std;
 // adj_list is used as a costant reference to evoid copying
 void breadth_first_search(const vector<vector<int>> &adj_list, int src, int N, vector<int> &dist)
 {
-    list<int> queue;                // list of nodes not evaluated yet
+    vector<int> queue(N);           // list of nodes not evaluated yet
     vector<bool> visited(N, false); // each position represents each node, it stores if the node was visited at least once
+    int pos = 0;
+    int next_empty = 1;
 
     // updating the first node: src
     visited[src] = true;
     dist[src] = 0;
-    queue.push_back(src);
+    queue[0] = (src);
 
-    while (!queue.empty()) // while there are nodes to evaluate
+    while (pos < next_empty) // while there are nodes to evaluate
     {
-        int node = queue.front(); // the first node is chosen
-        queue.pop_front();        // and it is removed from the queue
+        int node = queue[pos]; // the first node is chosen
+        pos += 1;              // and it is removed from the queue
 
         for (unsigned int i = 0; i < adj_list[node].size(); i++) // for each index of neighbour
         // here we have spacial locality by accessing the adj_list[node] entries, allocated sequencially
@@ -52,7 +54,8 @@ void breadth_first_search(const vector<vector<int>> &adj_list, int src, int N, v
             {
                 visited[adj_list[node][i]] = true;        // update to visited
                 dist[adj_list[node][i]] = dist[node] + 1; // +1 step distance to the neighbour adj_list[node][i]
-                queue.push_back(adj_list[node][i]);       // add to the queue
+                queue[next_empty] = (adj_list[node][i]);  // add to the queue
+                next_empty += 1;
             }
         }
     }

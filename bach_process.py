@@ -6,6 +6,6 @@ with cd('test-data-eff'):
     edgelist_list = glob.glob('*edgelist')
     print(edgelist_list)
     for edgelist in edgelist_list:
-        os.system(f'../node_eff {edgelist}')
+        os.system(f'../node_eff_no_list {edgelist}')
         prefix = edgelist.split('.')[0]
         os.system(f'../compare-expected-trab-1 {prefix}.eff')
