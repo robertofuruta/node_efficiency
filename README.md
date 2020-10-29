@@ -9,9 +9,9 @@ Since the studied graph type is: unweighted, undirected and sparse, the best sui
 
 To execute the BFS, it is more convenient and efficient to have the list of adjacent nodes for every node (instead of having to loop over the sparse adjacency matrix or the badly structured edge list), therefore we use the adjacency list to store the graph data.
 
-The ```node_eff.cpp``` program and the ```node_eff_no_list``` program achieve the same results.
+The ```node_eff.cpp``` program and the ```node_eff_no_list.cpp``` program achieve the same results.
 The ```node_eff.cpp``` is the first implementation of the code, which the queue in the BFS is implemented with the ```list``` object.
-The ```node_eff_no_list.cpp``` uses a ```vector``` as queue, achieving roughly a 2 times improviment in calculation speeds.
+The ```node_eff_no_list.cpp``` uses a ```vector``` as queue, although less intuitive, achieves roughly a 2 times improviment in calculation speeds.
 
 ## Compilation
 
