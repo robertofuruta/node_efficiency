@@ -16,10 +16,18 @@ class cd:
         os.chdir(self.savedPath)
 
 
+paralell_bool = bool(input(
+    'input 0 for sequential processing, 1 for parallel processing with OpenMP\n'))
+if paralell_bool:
+    num_threads = int(input('please enter the number of threads\n'))
+
 with cd('test-data-eff'):
     edgelist_list = glob.glob('*edgelist')
     print(edgelist_list)
     for edgelist in edgelist_list:
-        os.system(f'../node_eff_no_list {edgelist}')
+        if paralell_bool:
+            os.system(f'../node_eff_array_openmp {edgelist} {num_threads}')
+        else:
+            os.system(f'../node_eff_array {edgelist}')
         prefix = edgelist.split('.')[0]
         os.system(f'../compare-expected-trab-1 {prefix}.eff')
