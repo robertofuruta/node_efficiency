@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     if (argc != 3) // Reads the program name, the .edgelist file name from the terminal and the number of threads to be used
     {
         cerr
-            << "Give in the command line a file name of the edge list and the number of threads.\n";
+            << "Give in the command line the .edgelist file name and the number of threads.\n";
         return 1;
     }
 
