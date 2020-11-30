@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     }
 
     // if there is no error,
-    // the number of edges read.
+    // the number of nodes read.
     int N; // N is read from the .edgelist file name "???_n_'N'_k_'?_?'.edgelist"
     vector<string> split_file_name;
     stringstream s_stream(argv[1]); // string stream object
