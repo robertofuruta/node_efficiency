@@ -19,7 +19,6 @@
 
 #include <climits> //to use INT_MAX
 #include <vector>
-// #include <list>
 #include <string>
 #include <sstream>  // for string stream
 #include <iostream> // for data mannagement
@@ -66,7 +65,7 @@ void breadth_first_search(const vector<vector<int>> &adj_list, int src, int N, v
 
 int main(int argc, char *argv[])
 {
-    if (argc != 3) // Reads the program name and the .edgelist file name from the terminal
+    if (argc != 3) // Reads the program name, the .edgelist file name from the terminal and the number of threads to be used
     {
         cerr
             << "Give in the command line a file name of the edge list and the number of threads.\n";
@@ -80,10 +79,10 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    unsigned int num_threads = std::stoi(argv[2]);
+    unsigned int num_threads = std::stoi(argv[2]); // the number of threads is read from argv
 
     // if there is no error,
-    // the number of edges read.
+    // the number of nodes read.
     int N; // N is read from the .edgelist file name "???_n_'N'_k_'?_?'.edgelist"
     vector<string> split_file_name;
     stringstream s_stream(argv[1]); // string stream object
@@ -123,6 +122,13 @@ int main(int argc, char *argv[])
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
 
+// PARALLEL IMPLEMENTATION WITH OMP
+// It's done using pragma omp parallel for, with explicit shared objects:
+// adj_list: read only
+// N: read onlu
+// eff_list: to write the eff values on. It's expected that the pre-implemented "omp for" protocol will split the range of the for into
+// well distribuited continuous chuncks, minimizing the false sharing of this object.
+// private variables such as i,j,dist_from_src and eff are defined for each thread.
 #pragma omp parallel for default(none) shared(adj_list, N, eff_list) num_threads(num_threads)
     for (int i = 0; i < N; i++) // for every node:
     {
@@ -138,7 +144,7 @@ int main(int argc, char *argv[])
                 eff += 1. / dist_from_src[j] / (N - 1); // increment the efficiency
             }
         }
-        eff_list[i] = eff;
+        eff_list[i] = eff; // the value of eff is transfered to the global eff_list vector
     }
     // getting the duration:
     end = std::chrono::system_clock::now();
@@ -161,8 +167,12 @@ int main(int argc, char *argv[])
 
 /*
 * Elapsed times:
-* N = 10 between ~10^-6 s
-* N = 1000 ~0.05 s
-* N = 2000 ~0.2 s
-* N = 5000 between ~2.0 s
+* edges = 1.0*10ˆ5 : ~10 s
+* edges = 2.0*10^5 : ~20 s 
+* edges = 2.5*10^5 : ~100 s
+* edges = 4.0*10ˆ5 : ~30 s
+* edges = 5.0*10ˆ5 : ~150 s
+* edges = 1.0*10ˆ6:  ~between 150 and 250 s
+* the parallel processing with 4 thereads (2 + 2 hiperthreads) completed it's calculations in ~40±5)% of the time required
+* for the sequential counterpart. This represents roughly a 2.5 times improvement in performance.
 */
