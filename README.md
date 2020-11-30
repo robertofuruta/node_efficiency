@@ -9,21 +9,31 @@ Since the studied graph type is: unweighted, undirected and sparse, the best sui
 
 To execute the BFS, it is more convenient and efficient to have the list of adjacent nodes for every node (instead of having to loop over the sparse adjacency matrix or the badly structured edge list), therefore we use the adjacency list to store the graph data.
 
-The ```node_eff.cpp``` program and the ```node_eff_no_list.cpp``` program achieve the same results.
-The ```node_eff.cpp``` is the first implementation of the code, which the queue in the BFS is implemented with the ```list``` object.
-The ```node_eff_no_list.cpp``` uses a ```vector``` as queue, although less intuitive, achieves roughly a 2 times improviment in calculation speeds.
+The ```node_eff_sequential_list.cpp``` program and the ```node_eff_sequential_array.cpp``` program achieve the same results.
+The ```node_eff_sequential_list.cpp``` is the first implementation of the code, in which the queue for the BFS is implemented with the ```list``` object.
+The ```node_eff_sequential_array.cpp``` uses a ```vector``` as queue, although less intuitive, achieves roughly a 2 times improviment in calculation speeds.
 
+The ```node_eff_parallel_array_openmp``` is a parallel implementartion of the code above, using the OpenMP for C++.
 ## Compilation
 
 I reccomend to compile using:
 ```
-g++ -std=c++17 -Wall -Wextra -Wpedantic -O2 node_eff_no_list.cpp -o node_eff_no_list
+g++ -std=c++17 -Wall -Wextra -Wpedantic -O2 node_eff_sequential_array.cpp -o node_eff_sequential_array
+```
+And for the parallel program, reccomend to compile using:
+```
+g++ -std=c++17 -O2 -fopenmp node_eff_parallel_array_openmp.cpp -o node_eff_parallel_array_openmp
 ```
 
 ## Usage
 You can use the compiled program to get the efficiency of and individual graph by:
 ```
-./node_eff_no_list ba_n_1000_k_10_0_example.edgelist
+./node_eff_sequential_array ba_n_1000_k_10_0_example.edgelist
+```
+
+And for the parallel program, you need to inform the number of threads as well:
+```
+./node_eff_sequential_array ba_n_1000_k_10_0_example.edgelist 4
 ```
 
 If you want to process multiple files, save them to a directory named ```test-data-eff``` in the same location of the ```bach_process.py``` program and run it with:
