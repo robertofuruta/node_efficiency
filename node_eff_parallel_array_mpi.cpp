@@ -7,7 +7,7 @@
 * The list of efficiencies is saved to a .eff file, with the same prefix of the .edgelist file.
 
 * This program is an assignment for the "SFI5822 - Introdução à Programação Paralela"
-* (Introduction to Parallel Programming) course, tought by professor Gonzalo Travieso at the University of São Paulo (2020).
+* (Introduction to Parallel Programming) course, taught by professor Gonzalo Travieso at the University of São Paulo (2020).
 
 * Since the studied graph type is: unweighted, undirected and sparse, the best suited algorithm to find all shortest paths is
 * the breadth first search (BFS) applied to every node: http://en.wikipedia.org/wiki/Breadth-first_search.
@@ -34,7 +34,7 @@ using namespace std;
 
 // adj_list is used as a constant reference to avoid copying
 
-// this function is implemented iqually to the sequential program
+// this function is implemented equally to the sequential program
 void breadth_first_search(const vector<vector<int>> &adj_list, int src, int N, vector<int> &dist)
 {
     vector<int> queue(N); // vector of sequence of nodes to evaluate
@@ -56,7 +56,7 @@ void breadth_first_search(const vector<vector<int>> &adj_list, int src, int N, v
         pos += 1;              // and it is removed from the queue
 
         for (unsigned int i = 0; i < adj_list[node].size(); i++) // for each index of neighbour
-        // here we have spacial locality by accessing the adj_list[node] entries, allocated sequencially
+        // here we have spacial locality by accessing the adj_list[node] entries, allocated sequentially
         {
             if (visited[adj_list[node][i]] == false) // if it's not been visited:
             {
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
         {
             cerr << "Give in the command line the .edgelist file name and the number of threads.\n";
         }
-        MPI_Finalize(); // finilizes all processes
+        MPI_Finalize(); // finalizes all processes
         return 1;
     }
 
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
         {
             cerr << "Error opening file " << argv[1] << endl;
         }
-        MPI_Finalize(); // finilizes all processes
+        MPI_Finalize(); // finalizes all processes
         return 2;
     }
 
@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
     // the adjacency list (vector of vector of int) will be created
     // from the edge list.
     // the edge list is flattened to facilitate the broadcasting
-    // doing it in one message, minimizeng communication time
+    // doing it in one message, minimizing communication time
     vector<vector<int>> adj_list(N);
     vector<int> flat_edgelist;
 
@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
     // Distribution of elements per process.
     // Each process will be responsable for calculating the efficiency of
     // some nodes. The number of nodes will be distributed evenly and
-    // the remeinder will be distributed to the frist nodes.
+    // the remeinder will be distributed to the first nodes.
     //// For example: if 11 nodes will be distributed between 4 processes,
     //// rank 0: nodes [0, 1, 2]
     //// rank 1: nodes [3, 4, 5]
@@ -213,7 +213,7 @@ int main(int argc, char *argv[])
                 eff += 1. / dist_from_src[j] / (N - 1); // increment the efficiency
             }
         }
-        partial_eff_list.push_back(eff); // the value of eff is transfered to the global eff_list vector
+        partial_eff_list.push_back(eff); // the value of eff is transferred to the global eff_list vector
     }
 
     // Gathering
@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
 * Elapsed times:
 * Comparing with the performance of the openmp program, both with 4 processes
 * in a quad core cpu provided via server.
-* In average, the MPI implementation took 1.95 times loger than the OpenMP counterpart.
+* In average, the MPI implementation took 1.95 times longer than the OpenMP counterpart.
 * The performance difference was the largest in the graphs with ~ 200 000 edges, being ~ 2.3 times slower
 * The performance was closest in the largest networks with ~ 1 000 000 edges, being ~ 1.2 times slower
 */
