@@ -97,10 +97,14 @@ int main(int argc, char *argv[])
 
     // creating the .eff filename to use later
     string output_file;
+    string output_time;
+
     output_file = argv[1];
-    size_t pos = output_file.find(".");
+    size_t pos = output_file.find(".edgelist");
     output_file = output_file.substr(0, pos);
+    output_time = output_file;
     output_file += ".eff";
+    output_time += "_omp_.time";
 
     // the adjacency list (vector of vector of int) will be created
     vector<vector<int>> adj_list(N);
@@ -150,6 +154,15 @@ int main(int argc, char *argv[])
     end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;
     cout << elapsed_seconds.count() << endl;
+
+    // saving time into file
+    ofstream timefile(output_time);
+    timefile << setprecision(6) << fixed; // set 6 decimal places
+    if (timefile.is_open())
+    {
+        timefile << elapsed_seconds.count() << endl;
+    }
+    timefile.close();
 
     // after the eff_list is completely filled, it's content is written to the output_file
     ofstream myfile(output_file);
