@@ -11,18 +11,26 @@ To execute the BFS, it is more convenient and efficient to have the list of adja
 
 The ```node_eff_sequential_list.cpp``` program and the ```node_eff_sequential_array.cpp``` program achieve the same results.
 The ```node_eff_sequential_list.cpp``` is the first implementation of the code, in which the queue for the BFS is implemented with the ```list``` object.
-The ```node_eff_sequential_array.cpp``` uses a ```vector``` as queue, although less intuitive, achieves roughly a 2 times improviment in calculation speeds.
+The ```node_eff_sequential_array.cpp``` uses a ```vector``` as queue, although less intuitive, achieves roughly a 2 times improvement in calculation speeds.
 
-The ```node_eff_parallel_array_openmp``` is a parallel implementartion of the code above, using the OpenMP for C++.
+The ```node_eff_parallel_array_openmp.cpp``` is a parallel implementation of the code above, using the OpenMP for C++.
+
+The ```node_eff_parallel_array_mpi.cpp``` is a parallel implementation of the code above, using the OpenMPI for C (C++).
+
+
 ## Compilation
 
-I reccomend to compile using:
+I recommend to compile using:
 ```
 g++ -std=c++17 -Wall -Wextra -Wpedantic -O2 node_eff_sequential_array.cpp -o node_eff_sequential_array
 ```
-And for the parallel program, reccomend to compile using:
+For the OpenMP parallel program, I recommend to compile using:
 ```
 g++ -std=c++17 -O2 -fopenmp node_eff_parallel_array_openmp.cpp -o node_eff_parallel_array_openmp
+```
+And for the MPI parallel program, I recommend to compile using:
+```
+mpic++ -std=c++17 -O2 node_eff_parallel_array_mpi.cpp -o node_eff_parallel_array_mpi
 ```
 
 ## Usage
@@ -31,13 +39,32 @@ You can use the compiled program to get the efficiency of and individual graph b
 ./node_eff_sequential_array ba_n_1000_k_10_0_example.edgelist
 ```
 
-And for the parallel program, you need to inform the number of threads as well:
+for the OpenMP parallel program, you need to inform the number of threads as well:
 ```
 ./node_eff_sequential_array ba_n_1000_k_10_0_example.edgelist 4
 ```
+and for tho MPI parallel program, you execute it a bit differently
+```
+mpirun -np 4 node_eff_parallel_array_mpi ba_n_1000_k_10_0_example.edgelist
+```
 
-If you want to process multiple files, save them to a directory named ```test-data-eff``` in the same location of the ```bach_process.py``` program and run it with:
+If you want to process multiple files, save them to a directory named as you wish and run:
+
 ```
-python3 bach_process.py
+find . -name '*.edgelist' -exec  YOUR COMMAND HERE {} \;
 ```
-The .eff files will be outputted to the ```test-data-eff```directory.
+for example:
+
+```
+find . -name '*.edgelist' -exec node_eff_sequential_array {} \;
+```
+
+```
+find . -name '*.edgelist' -exec node_eff_parallel_array_openmp {} 4 \;
+```
+
+```
+find . -name '*.edgelist' -exec mpirun -np 4 /node_eff_parallel_array_mpi {} \;
+```
+The .eff files will be outputted to the same directory in which the .edgelist is found.
+
